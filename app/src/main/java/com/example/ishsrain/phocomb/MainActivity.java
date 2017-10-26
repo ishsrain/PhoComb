@@ -1,18 +1,22 @@
 package com.example.ishsrain.phocomb;
 
-import android.graphics.Color;
+import android.content.Intent;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
 
-  // Sound Text View
-  SoundTextView[] TextViewArray = new SoundTextView[3];
+  // Roll Text View
+  RollTextView[] textViewArray = new RollTextView[3];
 
   // Sequence Thread
-  SequenceThread SequenceThread;
+  SequenceThread sequenceThread;
+
+  // CombActivity Intent
+  Intent combIntent;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -20,9 +24,9 @@ public class MainActivity extends AppCompatActivity {
     setContentView(R.layout.activity_main);
 
     // Find TextView
-    TextViewArray[0] = (SoundTextView) findViewById(R.id.sound1);
-    TextViewArray[1] = (SoundTextView) findViewById(R.id.sound2);
-    TextViewArray[2] = (SoundTextView) findViewById(R.id.sound3);
+    textViewArray[0] = (RollTextView) findViewById(R.id.roll1);
+    textViewArray[1] = (RollTextView) findViewById(R.id.roll2);
+    textViewArray[2] = (RollTextView) findViewById(R.id.roll3);
 
     // Load Sound
 //    String[][] Character = {
@@ -30,18 +34,21 @@ public class MainActivity extends AppCompatActivity {
 //        {"ㅏ", "ㅑ", "ㅓ", "ㅕ", "ㅗ", "ㅛ", "ㅜ", "ㅠ", "ㅡ", "ㅣ", "ㅘ", "ㅝ", "ㅙ", "ㅞ", "ㅢ"},
 //        {" ", "ㄱ", "ㄴ", "ㄷ", "ㄹ", "ㅁ", "ㅅ", "ㅇ"}
 //    };
-    String[][] Character = {
+    String[][] selectedCharacter = {
         {"ㄱ", "ㄴ", "ㄷ", "ㄹ", "ㅁ", "ㅂ", "ㅅ", "ㅇ", "ㅈ"},
         {"ㅏ", "ㅓ", "ㅗ", "ㅜ", "ㅡ", "ㅣ"},
         {" ", "ㄱ", "ㄴ", "ㄹ", "ㅁ", "ㅅ", "ㅇ"}
     };
-    TextViewArray[0].Character = Character[0];
-    TextViewArray[1].Character = Character[1];
-    TextViewArray[2].Character = Character[2];
+    textViewArray[0].characters = selectedCharacter[0];
+    textViewArray[1].characters = selectedCharacter[1];
+    textViewArray[2].characters = selectedCharacter[2];
 
     // Check Sequence Thread Start
-    SequenceThread = new SequenceThread();
-    SequenceThread.start();
+    sequenceThread = new SequenceThread();
+    sequenceThread.start();
+
+    // CombActivitiy Intent Init
+    combIntent = new Intent(this, CombActivity.class);
   }
 
   // Sequence Thread for Click
@@ -54,21 +61,21 @@ public class MainActivity extends AppCompatActivity {
       try {
 
         // First TextView
-        TextViewArray[0].Allowed = true;
+        textViewArray[0].allowed = true;
 
         // Infinite Loop
         while (true) {
 
           // Check All Selected
           boolean AllSelected = true;
-          for (int i = 0; i < TextViewArray.length; i++) {
-            if (TextViewArray[i].Selected == false) {
+          for (int i = 0; i < textViewArray.length; i++) {
+            if (textViewArray[i].selected == false) {
               AllSelected = false;
               break;
             } else {
               // Allowed to Next Click
-              if (i + 1 < TextViewArray.length) {
-                TextViewArray[i + 1].Allowed = true;
+              if (i + 1 < textViewArray.length) {
+                textViewArray[i + 1].allowed = true;
               }
             }
           }
@@ -80,18 +87,25 @@ public class MainActivity extends AppCompatActivity {
             Thread.sleep(2000);
 
             // Text View Reset
-            for (int i = 0; i < TextViewArray.length; i++) {
-              TextViewArray[i].Allowed = false;
-              TextViewArray[i].Selected = false;
-              TextViewArray[i].RotationHandler.sendEmptyMessage(TextViewArray[i].INIT_MESSAGE);
+            for (int i = 0; i < textViewArray.length; i++) {
+              textViewArray[i].allowed = false;
+              textViewArray[i].selected = false;
+              textViewArray[i].rotationHandler.sendEmptyMessage(textViewArray[i].INIT_MESSAGE);
             }
-            TextViewArray[0].Allowed = true;
+            textViewArray[0].allowed = true;
 
             // Character Combination
-            char sound1 = TextViewArray[0].getText().charAt(0);
-            char sound2 = TextViewArray[1].getText().charAt(0);
-            char sound3 = TextViewArray[2].getText().charAt(0);
-            char sound4 = CharacterCombination(sound1, sound2, sound3);
+            char sound1 = textViewArray[0].getText().charAt(0);
+            char sound2 = textViewArray[1].getText().charAt(0);
+            char sound3 = textViewArray[2].getText().charAt(0);
+
+            // Put to Intent
+            combIntent.putExtra("sound1", sound1);
+            combIntent.putExtra("sound2", sound2);
+            combIntent.putExtra("sound3", sound3);
+            combHandler.sendEmptyMessage(0);
+
+            //char sound4 = characterCombination(sound1, sound2, sound3);
           }
 
           // Loop Speed
@@ -104,22 +118,10 @@ public class MainActivity extends AppCompatActivity {
     }
   }
 
-  // Function for Character Combination
-  final char[] ChoSung = {'ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'};
-  final char[] JungSung	= {'ㅏ', 'ㅐ', 'ㅑ', 'ㅒ', 'ㅓ', 'ㅔ', 'ㅕ', 'ㅖ', 'ㅗ', 'ㅘ', 'ㅙ', 'ㅚ', 'ㅛ', 'ㅜ', 'ㅝ', 'ㅞ', 'ㅟ', 'ㅠ', 'ㅡ', 'ㅢ', 'ㅣ'};
-  final char[] JongSung	= {' ', 'ㄱ', 'ㄲ', 'ㄳ', 'ㄴ', 'ㄵ', 'ㄶ', 'ㄷ', 'ㄹ', 'ㄺ', 'ㄻ', 'ㄼ', 'ㄽ', 'ㄾ', 'ㄿ', 'ㅀ', 'ㅁ', 'ㅂ', 'ㅄ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'};
-
-  public char CharacterCombination(char ch1, char ch2, char ch3) {
-
-    char ret_val;
-
-    int a = Arrays.binarySearch(ChoSung, ch1);
-    int b = Arrays.binarySearch(JungSung, ch2);
-    int c = Arrays.binarySearch(JongSung, ch3);
-
-    ret_val = (char)(0xAC00 + ((a*21)+b)*28+c);
-//    Log.d("Combination Output", ""+ret_val);
-
-    return ret_val;
-  }
+  Handler combHandler = new Handler() {
+    @Override
+    public void handleMessage(Message msg) {
+      startActivity(combIntent);
+    }
+  };
 }
