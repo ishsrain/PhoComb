@@ -3,12 +3,17 @@ package com.example.ishsrain.phocomb;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
 import java.util.Arrays;
 
 public class CombActivity extends AppCompatActivity {
 
   // Sound Text View
   SoundTextView[] textViewArray = new SoundTextView[3];
+
+  // Comb Text View
+  CombTextView combTextView;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +35,20 @@ public class CombActivity extends AppCompatActivity {
     textViewArray[0].sound = sound1;
     textViewArray[1].sound = sound2;
     textViewArray[2].sound = sound3;
+
+    // Character Combination
+    combTextView = (CombTextView) findViewById(R.id.CombSound);
+    combTextView.sound = characterCombination(sound1, sound2, sound3);
+
+    combTextView.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        finish();
+      }
+    });
+
+    // Activity Conversion Animation
+    overridePendingTransition(0,0);
   }
 
   // Function for Character Combination

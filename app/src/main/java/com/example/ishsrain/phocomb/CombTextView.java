@@ -3,36 +3,36 @@ package com.example.ishsrain.phocomb;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.util.AttributeSet;
 import android.support.v7.widget.AppCompatTextView;
+import android.util.AttributeSet;
 
-public class SoundTextView extends AppCompatTextView {
+public class CombTextView extends AppCompatTextView {
 
   // Main Context
   private Context mainContext;
 
-  // Sound Character
+  // Character
   char sound;
 
-  public SoundTextView(Context context) {
+  public CombTextView(Context context) {
     super(context);
   }
 
-  public SoundTextView(Context context, AttributeSet attrs) {
+  public CombTextView(Context context, AttributeSet attrs) {
     super(context, attrs);
 
     // Main Activity
     mainContext = context;
 
     // Init Setting
-    setTextSize(100);
-    setTextColor(Color.parseColor("#DFDFDF"));
-    setText(sound+"");
+    setTextSize(300);
+    setTextColor(Color.parseColor("#565656"));
+    //setText(sound+"");
 //    Typeface face=Typeface.createFromAsset(context.getAssets(), "Helvetica_Neue.ttf");
 //    this.setTypeface(face);
   }
 
-  public SoundTextView(Context context, AttributeSet attrs, int defStyle) {
+  public CombTextView(Context context, AttributeSet attrs, int defStyle) {
     super(context, attrs, defStyle);
   }
 

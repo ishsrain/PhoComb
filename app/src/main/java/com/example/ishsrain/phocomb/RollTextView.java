@@ -7,8 +7,9 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import android.support.v7.widget.AppCompatTextView;
 
-class RollTextView extends android.support.v7.widget.AppCompatTextView {
+class RollTextView extends AppCompatTextView {
 
   // Message Constant
   public static final int ROTATION_MESSAGE = 1;

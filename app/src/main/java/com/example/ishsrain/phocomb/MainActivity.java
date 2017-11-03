@@ -5,6 +5,10 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.ImageView;
 import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
@@ -17,6 +21,10 @@ public class MainActivity extends AppCompatActivity {
 
   // CombActivity Intent
   Intent combIntent;
+  Intent configIntent;
+
+  // ImageView
+  ImageView button;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +57,20 @@ public class MainActivity extends AppCompatActivity {
 
     // CombActivitiy Intent Init
     combIntent = new Intent(this, CombActivity.class);
+    configIntent = new Intent(this, ConfigActivity.class);
+
+    // Button
+    button = (ImageView) findViewById(R.id.button);
+    button.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        startActivity(configIntent);
+        finish();
+      }
+    });
+
+    // Activity Conversion Animation
+    overridePendingTransition(0,0);
   }
 
   // Sequence Thread for Click
@@ -86,14 +108,6 @@ public class MainActivity extends AppCompatActivity {
             // Wait
             Thread.sleep(2000);
 
-            // Text View Reset
-            for (int i = 0; i < textViewArray.length; i++) {
-              textViewArray[i].allowed = false;
-              textViewArray[i].selected = false;
-              textViewArray[i].rotationHandler.sendEmptyMessage(textViewArray[i].INIT_MESSAGE);
-            }
-            textViewArray[0].allowed = true;
-
             // Character Combination
             char sound1 = textViewArray[0].getText().charAt(0);
             char sound2 = textViewArray[1].getText().charAt(0);
@@ -105,7 +119,13 @@ public class MainActivity extends AppCompatActivity {
             combIntent.putExtra("sound3", sound3);
             combHandler.sendEmptyMessage(0);
 
-            //char sound4 = characterCombination(sound1, sound2, sound3);
+            // Text View Reset
+            for (int i = 0; i < textViewArray.length; i++) {
+              textViewArray[i].allowed = false;
+              textViewArray[i].selected = false;
+              textViewArray[i].rotationHandler.sendEmptyMessage(textViewArray[i].INIT_MESSAGE);
+            }
+            textViewArray[0].allowed = true;
           }
 
           // Loop Speed
