@@ -145,7 +145,7 @@
             android:textSize="18sp" />
           <Space
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1" />
           <TextView
             android:id="@+id/menu2"
@@ -156,10 +156,32 @@
             android:textSize="18sp" />
           <Space
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1" />
           <TextView
             android:id="@+id/menu3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:textColor="#7D7D7D"
+            android:textSize="18sp" />
+          <Space
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+          <TextView
+            android:id="@+id/menu4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:textColor="#7D7D7D"
+            android:textSize="18sp" />
+          <Space
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+          <TextView
+            android:id="@+id/menu5"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
@@ -179,8 +201,8 @@
           android:layout_height="0dp"
           android:layout_weight="21"
           android:orientation="vertical">
-          <ListView
-            android:id="@+id/listView"
+          <GridView
+            android:id="@+id/GridView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
         </LinearLayout>

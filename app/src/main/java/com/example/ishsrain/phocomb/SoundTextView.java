@@ -27,7 +27,7 @@ public class SoundTextView extends AppCompatTextView {
     // Init Setting
     setTextSize(100);
     setTextColor(Color.parseColor("#DFDFDF"));
-    setText(sound+"");
+    setText(sound + "");
 //    Typeface face=Typeface.createFromAsset(context.getAssets(), "Helvetica_Neue.ttf");
 //    this.setTypeface(face);
   }
@@ -40,6 +40,6 @@ public class SoundTextView extends AppCompatTextView {
   protected void onDraw(Canvas canvas) {
     super.onDraw(canvas);
 
-    setText(sound+"");
+    setText(sound + "");
   }
 }

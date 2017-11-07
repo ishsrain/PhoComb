@@ -1,7 +1,6 @@
 package com.example.ishsrain.phocomb;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Handler;
 import android.os.Message;
@@ -106,11 +105,12 @@ class RollTextView extends AppCompatTextView {
 
   // Rotation Handler for Looping
   class RotationThread extends Thread {
-    public void RotationThread () {
+
+    public void RotationThread() {
       // Initialization
     }
 
-    public void run () {
+    public void run() {
       try {
         while (true) {
           rotationHandler.sendEmptyMessage(ROTATION_MESSAGE);

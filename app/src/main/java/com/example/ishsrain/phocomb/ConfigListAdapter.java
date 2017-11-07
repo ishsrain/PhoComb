@@ -12,13 +12,19 @@ import java.util.ArrayList;
 
 public class ConfigListAdapter extends BaseAdapter {
 
+  // Menu Type
+  public enum CONFIG {
+    GENERAL_MENU, EDUCATION_MENU, TYPE_MENU, REPEAT_MENU, TIME_MENU, STIMULI_MENU, SOUND_MENU, SOUND1_MENU, SOUND2_MENU, SOUND3_MENU, CHAR_MENU, WORD_MENU
+  }
+  CONFIG menuType = CONFIG.GENERAL_MENU;
+
   // ArrayList
   private ArrayList<ConfigItem> listViewItemList = new ArrayList<ConfigItem>();
 
   // xmlResource
   int xmlResource;
 
-  public ConfigListAdapter(int resource, String[] list) {
+  public ConfigListAdapter(int resource, String[] list, CONFIG menuType) {
     // XML
     xmlResource = resource;
     // List
@@ -27,6 +33,8 @@ public class ConfigListAdapter extends BaseAdapter {
       item.setText(list[i]);
       listViewItemList.add(item);
     }
+    //Config
+    this.menuType = menuType;
   }
 
   @Override
@@ -47,8 +55,9 @@ public class ConfigListAdapter extends BaseAdapter {
     TextView textView = (TextView) view.findViewById(R.id.textView);
     textView.setText(item.getText());
 
-    if(xmlResource == R.layout.config_list_check) {
+    if (xmlResource == R.layout.config_list_check) {
       CheckBox checkBox = (CheckBox) view.findViewById(R.id.checkBox);
+      checkBox.setClickable(false);
       checkBox.setChecked(item.getCheck());
     }
 
@@ -61,7 +70,7 @@ public class ConfigListAdapter extends BaseAdapter {
   }
 
   @Override
-  public Object getItem(int i) {
+  public ConfigItem getItem(int i) {
     return listViewItemList.get(i);
   }
 

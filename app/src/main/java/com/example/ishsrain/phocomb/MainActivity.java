@@ -7,9 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.ImageView;
-import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -22,6 +20,9 @@ public class MainActivity extends AppCompatActivity {
   // CombActivity Intent
   Intent combIntent;
   Intent configIntent;
+
+  // Data
+  ConfigObject config;
 
   // ImageView
   ImageView button;
@@ -36,26 +37,53 @@ public class MainActivity extends AppCompatActivity {
     textViewArray[1] = (RollTextView) findViewById(R.id.roll2);
     textViewArray[2] = (RollTextView) findViewById(R.id.roll3);
 
+    // Pre Intent
+    Intent preIntent = getIntent();
+    config = (ConfigObject) preIntent.getSerializableExtra("config");
+//    if(config != null) {
+//      Toast.makeText(this, config.toString(), Toast.LENGTH_LONG);
+//    }
+
+    String[] s1 = new String[config.s1.size()];
+    String[] s2 = new String[config.s2.size()];
+    String[] s3 = new String[config.s3.size()];
+
+    for(int i=0; i<s1.length; i++) {
+      s1[i] = config.s1.get(i);
+    }
+
+    for(int i=0; i<s2.length; i++) {
+      s2[i] = config.s2.get(i);
+    }
+
+    for(int i=0; i<s3.length; i++) {
+      s3[i] = config.s3.get(i);
+    }
+
+    textViewArray[0].characters = s1;
+    textViewArray[1].characters = s2;
+    textViewArray[2].characters = s3;
+
     // Load Sound
 //    String[][] Character = {
 //        {"ㄱ", "ㄴ", "ㄷ", "ㄹ", "ㅁ", "ㅂ", "ㅅ", "ㅇ", "ㅈ", "ㅊ", "ㅋ", "ㅌ", "ㅍ", "ㅎ", "ㄲ", "ㄸ", "ㅃ", "ㅆ", "ㅉ"},
 //        {"ㅏ", "ㅑ", "ㅓ", "ㅕ", "ㅗ", "ㅛ", "ㅜ", "ㅠ", "ㅡ", "ㅣ", "ㅘ", "ㅝ", "ㅙ", "ㅞ", "ㅢ"},
 //        {" ", "ㄱ", "ㄴ", "ㄷ", "ㄹ", "ㅁ", "ㅅ", "ㅇ"}
 //    };
-    String[][] selectedCharacter = {
-        {"ㄱ", "ㄴ", "ㄷ", "ㄹ", "ㅁ", "ㅂ", "ㅅ", "ㅇ", "ㅈ"},
-        {"ㅏ", "ㅓ", "ㅗ", "ㅜ", "ㅡ", "ㅣ"},
-        {" ", "ㄱ", "ㄴ", "ㄹ", "ㅁ", "ㅅ", "ㅇ"}
-    };
-    textViewArray[0].characters = selectedCharacter[0];
-    textViewArray[1].characters = selectedCharacter[1];
-    textViewArray[2].characters = selectedCharacter[2];
+//    String[][] selectedCharacter = {
+//        {"ㄱ", "ㄴ", "ㄷ", "ㄹ", "ㅁ", "ㅂ", "ㅅ", "ㅇ", "ㅈ"},
+//        {"ㅏ", "ㅓ", "ㅗ", "ㅜ", "ㅡ", "ㅣ"},
+//        {" ", "ㄱ", "ㄴ", "ㄹ", "ㅁ", "ㅅ", "ㅇ"}
+//    };
+//    textViewArray[0].characters = selectedCharacter[0];
+//    textViewArray[1].characters = selectedCharacter[1];
+//    textViewArray[2].characters = selectedCharacter[2];
 
     // Check Sequence Thread Start
     sequenceThread = new SequenceThread();
     sequenceThread.start();
 
-    // CombActivitiy Intent Init
+    // Next Intent Init
     combIntent = new Intent(this, CombActivity.class);
     configIntent = new Intent(this, ConfigActivity.class);
 
@@ -64,22 +92,23 @@ public class MainActivity extends AppCompatActivity {
     button.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View view) {
+        configIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(configIntent);
-        finish();
       }
     });
 
     // Activity Conversion Animation
-    overridePendingTransition(0,0);
+    overridePendingTransition(0, 0);
   }
 
   // Sequence Thread for Click
   class SequenceThread extends Thread {
 
-    public void SequenceThread () {
+    public void SequenceThread() {
       // Initialization
     }
-    public void run () {
+
+    public void run() {
       try {
 
         // First TextView
