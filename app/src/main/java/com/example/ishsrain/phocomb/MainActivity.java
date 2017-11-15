@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
   Intent configIntent;
 
   // Data
-  ConfigObject config;
+  ConfigData mConfigData;
 
   // ImageView
   ImageView button;
@@ -39,30 +39,10 @@ public class MainActivity extends AppCompatActivity {
 
     // Pre Intent
     Intent preIntent = getIntent();
-    config = (ConfigObject) preIntent.getSerializableExtra("config");
+    mConfigData = (ConfigData) preIntent.getSerializableExtra("ConfigData");
 //    if(config != null) {
 //      Toast.makeText(this, config.toString(), Toast.LENGTH_LONG);
 //    }
-
-    String[] s1 = new String[config.s1.size()];
-    String[] s2 = new String[config.s2.size()];
-    String[] s3 = new String[config.s3.size()];
-
-    for(int i=0; i<s1.length; i++) {
-      s1[i] = config.s1.get(i);
-    }
-
-    for(int i=0; i<s2.length; i++) {
-      s2[i] = config.s2.get(i);
-    }
-
-    for(int i=0; i<s3.length; i++) {
-      s3[i] = config.s3.get(i);
-    }
-
-    textViewArray[0].characters = s1;
-    textViewArray[1].characters = s2;
-    textViewArray[2].characters = s3;
 
     // Load Sound
 //    String[][] Character = {
@@ -70,14 +50,44 @@ public class MainActivity extends AppCompatActivity {
 //        {"ㅏ", "ㅑ", "ㅓ", "ㅕ", "ㅗ", "ㅛ", "ㅜ", "ㅠ", "ㅡ", "ㅣ", "ㅘ", "ㅝ", "ㅙ", "ㅞ", "ㅢ"},
 //        {" ", "ㄱ", "ㄴ", "ㄷ", "ㄹ", "ㅁ", "ㅅ", "ㅇ"}
 //    };
-//    String[][] selectedCharacter = {
-//        {"ㄱ", "ㄴ", "ㄷ", "ㄹ", "ㅁ", "ㅂ", "ㅅ", "ㅇ", "ㅈ"},
-//        {"ㅏ", "ㅓ", "ㅗ", "ㅜ", "ㅡ", "ㅣ"},
-//        {" ", "ㄱ", "ㄴ", "ㄹ", "ㅁ", "ㅅ", "ㅇ"}
-//    };
-//    textViewArray[0].characters = selectedCharacter[0];
-//    textViewArray[1].characters = selectedCharacter[1];
-//    textViewArray[2].characters = selectedCharacter[2];
+    String[][] selectedCharacter = {
+        {"ㄱ", "ㄴ", "ㄷ", "ㄹ", "ㅁ", "ㅂ", "ㅅ", "ㅇ", "ㅈ"},
+        {"ㅏ", "ㅓ", "ㅗ", "ㅜ", "ㅡ", "ㅣ"},
+        {" ", "ㄱ", "ㄴ", "ㄹ", "ㅁ", "ㅅ", "ㅇ"}
+    };
+
+    int size = mConfigData.s1.size();
+    if(size != 0) {
+      String[] s1 = new String[mConfigData.s1.size()];
+      for(int i=0; i<s1.length; i++) {
+        s1[i] = mConfigData.s1.get(i);
+      }
+      textViewArray[0].characters = s1;
+    } else {
+      textViewArray[0].characters = selectedCharacter[0];
+    }
+
+    size = mConfigData.s2.size();
+    if(size != 0) {
+      String[] s2 = new String[mConfigData.s2.size()];
+      for (int i = 0; i < s2.length; i++) {
+        s2[i] = mConfigData.s2.get(i);
+      }
+      textViewArray[1].characters = s2;
+    } else {
+      textViewArray[1].characters = selectedCharacter[1];
+    }
+
+    size = mConfigData.s3.size();
+    if(size != 0) {
+      String[] s3 = new String[mConfigData.s3.size()];
+      for (int i = 0; i < s3.length; i++) {
+        s3[i] = mConfigData.s3.get(i);
+      }
+      textViewArray[2].characters = s3;
+    } else {
+      textViewArray[2].characters = selectedCharacter[2];
+    }
 
     // Check Sequence Thread Start
     sequenceThread = new SequenceThread();

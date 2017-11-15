@@ -3,61 +3,78 @@ package com.example.ishsrain.phocomb;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-
 public class ConfigObject implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
-  public ArrayList<String> s1 = new ArrayList<String>();
-  public ArrayList<String> s2 = new ArrayList<String>();
-  public ArrayList<String> s3 = new ArrayList<String>();
+  int mType;
 
-  private int type = 0;
-  private int number = 0;
-  private int time = 0;
-  private int stimuli = 0;
+  ArrayList<ConfigItem> mItem = new ArrayList<ConfigItem>();
 
   public ConfigObject() {
 
   }
 
-  // Set Methods
-  void setType(int type) {
-    this.type = type;
+  void add(String str){
+    ConfigItem item = new ConfigItem();
+    item.setText(str);
+    mItem.add(item);
   }
 
-  void setNumber(int number) {
-    this.number = number;
+  String getText(int position) {
+    return mItem.get(position).getText();
   }
 
-  void setTime(int time) {
-    this.time = time;
+  void setText(int position,String str) {
+    mItem.get(position).setText(str);
   }
 
-  void setStimuli(int stimuli) {
-    this.stimuli = stimuli;
+  boolean getCheck(int position) {
+    return mItem.get(position).getCheck();
   }
 
-  // Get Methods
+  void setCheck(int position, boolean check) {
+    mItem.get(position).setCheck(check);
+  }
+
+  int getSize() {
+    return mItem.size();
+  }
+
   int getType() {
-    return type;
+    return mType;
   }
 
-  int getNumber() {
-    return number;
+  void setType(int type) {
+    mType = type;
   }
 
-  int getTime() {
-    return time;
+  public class ConfigItem  implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    String mText;
+    Boolean mCheck = false;
+
+    public ConfigItem() {
+
+    }
+
+    public void setText(String str) {
+      mText = str;
+    }
+
+    public void setCheck(Boolean ckeck) {
+      mCheck = ckeck;
+    }
+
+    public String getText() {
+      return mText;
+    }
+
+    public Boolean getCheck() {
+      return mCheck;
+    }
   }
 
-  int getStimuli() {
-    return stimuli;
-  }
-
-  public String toString() {
-    String str;
-    str = "type: " + type + " number: " + number + " time: " + time + " stimuli : " + stimuli;
-    return str;
-  }
 }

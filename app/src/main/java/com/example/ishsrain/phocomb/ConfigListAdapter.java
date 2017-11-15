@@ -1,82 +1,105 @@
 package com.example.ishsrain.phocomb;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.TextView;
-import java.util.ArrayList;
+import com.example.ishsrain.phocomb.ConfigFragment.OnListFragmentInteractionListener;
 
-public class ConfigListAdapter extends BaseAdapter {
+public class ConfigListAdapter extends RecyclerView.Adapter<ConfigListAdapter.Holder> {
 
-  // Menu Type
-  public enum CONFIG {
-    GENERAL_MENU, EDUCATION_MENU, TYPE_MENU, REPEAT_MENU, TIME_MENU, STIMULI_MENU, SOUND_MENU, SOUND1_MENU, SOUND2_MENU, SOUND3_MENU, CHAR_MENU, WORD_MENU
-  }
-  CONFIG menuType = CONFIG.GENERAL_MENU;
+  // Config Object
+  ConfigObject mConfig;
 
-  // ArrayList
-  private ArrayList<ConfigItem> listViewItemList = new ArrayList<ConfigItem>();
+  // Listener
+  private final OnListFragmentInteractionListener mListener;
 
-  // xmlResource
-  int xmlResource;
+  // xml Resource
+  int mResource;
 
-  public ConfigListAdapter(int resource, String[] list, CONFIG menuType) {
+  public ConfigListAdapter(int resource, ConfigObject config,
+      OnListFragmentInteractionListener Listener) {
+
     // XML
-    xmlResource = resource;
+    mResource = resource;
+
+    // Listener
+    mListener = Listener;
+
     // List
-    for (int i = 0; i < list.length; i++) {
-      ConfigItem item = new ConfigItem();
-      item.setText(list[i]);
-      listViewItemList.add(item);
-    }
-    //Config
-    this.menuType = menuType;
+    mConfig = config;
+
   }
 
   @Override
-  public View getView(int i, View view, ViewGroup viewGroup) {
-    final int pos = i;
-    final Context context = viewGroup.getContext();
-
+  public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
     // View
-    if (view == null) {
-      LayoutInflater inflater = (LayoutInflater) context
-          .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-      view = inflater.inflate(xmlResource, viewGroup, false);
+    View view = LayoutInflater.from(parent.getContext()).inflate(mResource, parent, false);
+
+    // Holder
+    Holder holder = new Holder(view);
+
+    return holder;
+  }
+
+  @Override
+  public void onBindViewHolder(Holder holder, int position) {
+
+    // Set
+    holder.mTextView.setText(mConfig.getText(position));
+    if (mResource == R.layout.config_list_check) {
+//    if(holder.mCheckBox != null) {
+        holder.mCheckBox.setChecked(mConfig.getCheck(position));
+        holder.mCheckBox.setClickable(false);
     }
+  }
 
-    // Data
-    ConfigItem item = listViewItemList.get(pos);
-
-    TextView textView = (TextView) view.findViewById(R.id.textView);
-    textView.setText(item.getText());
-
-    if (xmlResource == R.layout.config_list_check) {
-      CheckBox checkBox = (CheckBox) view.findViewById(R.id.checkBox);
-      checkBox.setClickable(false);
-      checkBox.setChecked(item.getCheck());
+  @Override
+  public int getItemCount() {
+    if(mConfig != null) {
+      return mConfig.getSize();
     }
-
-    return view;
+    else {
+      return 0;
+    }
   }
 
-  @Override
-  public int getCount() {
-    return listViewItemList.size();
-  }
+  // ViewHolder is one of ListView.
+  public class Holder extends RecyclerView.ViewHolder {
 
-  @Override
-  public ConfigItem getItem(int i) {
-    return listViewItemList.get(i);
-  }
+    public final TextView mTextView;
+    public final CheckBox mCheckBox;
 
-  @Override
-  public long getItemId(int i) {
-    return i;
+    public Holder(View view) {
+      super(view);
+
+      mTextView = (TextView) view.findViewById(R.id.textView);
+      mCheckBox = (CheckBox) view.findViewById(R.id.checkBox);
+
+      view.setOnClickListener(new OnClickListener() {
+        @Override
+        public void onClick(View view) {
+
+          // Get Position
+          int position = getAdapterPosition();
+
+          // Get Item
+          if (!mConfig.getCheck(position)) {
+            mConfig.setCheck(position, true);
+          } else {
+            mConfig.setCheck(position, false);
+          }
+          notifyDataSetChanged();
+
+          // Call Listener
+          mListener.onListFragmentInteraction(mConfig, position);
+        }
+      });
+    }
   }
 
 }

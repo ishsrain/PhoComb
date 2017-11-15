@@ -2,35 +2,34 @@ package com.example.ishsrain.phocomb;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
-import android.widget.GridView;
 import android.widget.TextView;
-import com.example.ishsrain.phocomb.ConfigListAdapter.CONFIG;
+import com.example.ishsrain.phocomb.ConfigFragment.OnListFragmentInteractionListener;
 
-public class ConfigActivity extends AppCompatActivity {
+public class ConfigActivity extends AppCompatActivity
+    implements OnListFragmentInteractionListener {
 
-  // Intent
-  Intent intent;
-
-  // List View
-  GridView gridView;
-
-  // Button
-  Button button;
-
-  // TextView
-  TextView[] menu = new TextView[5];
-  TextView[] sidemenu = new TextView[2];
-  TextView[] sideline = new TextView[2];
+  // Menu Type
+  public static final int GENERAL_MENU = 0;
+  public static final int TYPE_MENU = 1;
+  public static final int REPEAT_MENU = 2;
+  public static final int TIME_MENU = 3;
+  public static final int STIMULI_MENU = 4;
+  public static final int EDUCATION_MENU = 5;
+  public static final int SOUND_MENU = 6;
+  public static final int CHAR_MENU = 7;
+  public static final int WORD_MENU = 8;
+  public static final int SOUND1_MENU = 9;
+  public static final int SOUND2_MENU = 10;
+  public static final int SOUND3_MENU = 11;
 
   // List Menu
-  ConfigListAdapter[] adapter = new ConfigListAdapter[12];
   static final String[][] MENU_STRING = {
       {"장애 유형", "반복 횟수", "교육 시간", "자극 유무"},
       {"장애 없음", "지적 장애", "언어 장애", "자폐성 장애", "정신 장애", "학습 장애", "기타"},
@@ -50,221 +49,219 @@ public class ConfigActivity extends AppCompatActivity {
 //          "ㄿ", "ㅀ", "ㅁ", "ㅂ", "ㅄ", "ㅅ", "ㅆ", "ㅇ", "ㅈ", "ㅊ", "ㅋ", "ㅌ", "ㅍ", "ㅎ"}
   };
 
-  // Config
-  ConfigObject config;
-  int type = 0;
-  int number = 0;
-  int time = 0;
-  int stimuli = 0;
+  // Config Data
+  ConfigData mConfigData;
+
+  // Main Intent
+  Intent mIntent;
+
+  // Fragment Manager
+  FragmentManager mFragmentManager;
+
+  // TextView
+  TextView[] mMenu = new TextView[5];
+  TextView[] mSideMenu = new TextView[2];
+  TextView[] mSideLine = new TextView[2];
+
+  // Button
+  Button mButton;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_config);
 
-    // Intent
-    intent = new Intent(this, MainActivity.class);
-
     // Config Data
-    config = new ConfigObject();
+    mConfigData = new ConfigData();
+
+    // Main Intent
+    mIntent = new Intent(this, MainActivity.class);
+
+    // Fragment Manager
+    mFragmentManager = getSupportFragmentManager();
+
+    // Init Fragment (TBA)
+    changeFragment(R.layout.config_list_normal, MENU_STRING[GENERAL_MENU], GENERAL_MENU);
 
     // TextView
-    menu[0] = (TextView) findViewById(R.id.menu1);
-    menu[1] = (TextView) findViewById(R.id.menu2);
-    menu[2] = (TextView) findViewById(R.id.menu3);
-    menu[3] = (TextView) findViewById(R.id.menu4);
-    menu[4] = (TextView) findViewById(R.id.menu5);
-    sidemenu[0] = (TextView) findViewById(R.id.sidemenu1);
-    sidemenu[1] = (TextView) findViewById(R.id.sidemenu2);
-    sideline[0] = (TextView) findViewById(R.id.sideline1);
-    sideline[1] = (TextView) findViewById(R.id.sideline2);
+    mMenu[0] = (TextView) findViewById(R.id.menu1);
+    mMenu[1] = (TextView) findViewById(R.id.menu2);
+    mMenu[2] = (TextView) findViewById(R.id.menu3);
+    mMenu[3] = (TextView) findViewById(R.id.menu4);
+    mMenu[4] = (TextView) findViewById(R.id.menu5);
+    mSideMenu[0] = (TextView) findViewById(R.id.sidemenu1);
+    mSideMenu[1] = (TextView) findViewById(R.id.sidemenu2);
+    mSideLine[0] = (TextView) findViewById(R.id.sideline1);
+    mSideLine[1] = (TextView) findViewById(R.id.sideline2);
+
+    mSideMenu[0].setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        // Fragment Change
+        changeFragment(R.layout.config_list_normal, MENU_STRING[GENERAL_MENU], GENERAL_MENU);
+      }
+    });
+
+    mSideMenu[1].setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        // Fragment Change
+        changeFragment(R.layout.config_list_normal, MENU_STRING[EDUCATION_MENU], EDUCATION_MENU);
+      }
+    });
 
     // Button
-    button = (Button) findViewById(R.id.button);
-    button.setOnClickListener(new OnClickListener() {
+    mButton = (Button) findViewById(R.id.button);
+    mButton.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View view) {
-        updateConfig(config);
-        intent.putExtra("config", config);
-        startActivity(intent);
+        mConfigData.makeSelection();
+        mIntent.putExtra("ConfigData", mConfigData);
+        startActivity(mIntent);
       }
     });
-
-    // List Adapter
-    adapter[0] = new ConfigListAdapter(R.layout.config_list_normal, MENU_STRING[0],
-        CONFIG.GENERAL_MENU);
-    adapter[1] = new ConfigListAdapter(R.layout.config_list_check, MENU_STRING[1],
-        CONFIG.TYPE_MENU);
-    adapter[2] = new ConfigListAdapter(R.layout.config_list_check, MENU_STRING[2],
-        CONFIG.REPEAT_MENU);
-    adapter[3] = new ConfigListAdapter(R.layout.config_list_check, MENU_STRING[3],
-        CONFIG.TIME_MENU);
-    adapter[4] = new ConfigListAdapter(R.layout.config_list_check, MENU_STRING[4],
-        CONFIG.STIMULI_MENU);
-    adapter[5] = new ConfigListAdapter(R.layout.config_list_normal, MENU_STRING[5],
-        CONFIG.EDUCATION_MENU);
-    adapter[6] = new ConfigListAdapter(R.layout.config_list_normal, MENU_STRING[6],
-        CONFIG.SOUND_MENU);
-    adapter[7] = new ConfigListAdapter(R.layout.config_list_check, MENU_STRING[7],
-        CONFIG.CHAR_MENU);
-    adapter[8] = new ConfigListAdapter(R.layout.config_list_check, MENU_STRING[8],
-        CONFIG.WORD_MENU);
-    adapter[9] = new ConfigListAdapter(R.layout.config_list_check, MENU_STRING[9],
-        CONFIG.SOUND1_MENU);
-    adapter[10] = new ConfigListAdapter(R.layout.config_list_check, MENU_STRING[10],
-        CONFIG.SOUND2_MENU);
-    adapter[11] = new ConfigListAdapter(R.layout.config_list_check, MENU_STRING[11],
-        CONFIG.SOUND3_MENU);
-
-    // List View
-    gridView = (GridView) findViewById(R.id.GridView);
-    gridView.setAdapter(adapter[0]);
-    gridView.setOnItemClickListener(new OnItemClickListener() {
-      @Override
-      public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-        // Adapter
-        ConfigListAdapter adapters = (ConfigListAdapter) adapterView.getAdapter();
-
-        // Item
-        ConfigItem item = adapters.getItem(i);
-
-        // Update view (toggle)
-        if (!item.getCheck()) {
-          item.setCheck(true);
-        } else {
-          item.setCheck(false);
-        }
-        adapters.notifyDataSetChanged();
-
-        CONFIG menuType = adapters.menuType;
-        if (menuType == CONFIG.GENERAL_MENU) {
-          gridView.setNumColumns(1);
-          menu[1].setText(">");
-          menu[2].setText(MENU_STRING[0][i]);
-          menu[3].setText("");
-          menu[4].setText("");
-          gridView.setAdapter(adapter[i + 1]);
-        } else if (menuType == CONFIG.EDUCATION_MENU) {
-          menu[1].setText(">");
-          menu[2].setText(MENU_STRING[5][i]);
-          menu[3].setText("");
-          menu[4].setText("");
-          gridView.setNumColumns(1);
-          gridView.setAdapter(adapter[i + 6]);
-        } else if (menuType == CONFIG.TYPE_MENU) {
-          config.setType(i);
-        } else if (menuType == CONFIG.REPEAT_MENU) {
-          config.setNumber(i);
-        } else if (menuType == CONFIG.TIME_MENU) {
-          config.setTime(i);
-        } else if (menuType == CONFIG.STIMULI_MENU) {
-          config.setStimuli(i);
-        } else if (menuType == CONFIG.SOUND_MENU) {
-          menu[3].setText(">");
-          menu[4].setText(MENU_STRING[6][i]);
-          gridView.setNumColumns(5);
-          gridView.setAdapter(adapter[i + 9]);
-        }
-      }
-    });
-
-    sidemenu[0].setOnClickListener(new OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        // Menu Change
-        menu[0].setText("일반");
-        menu[1].setText("");
-        menu[2].setText("");
-        menu[3].setText("");
-        menu[4].setText("");
-        gridView.setNumColumns(1);
-        gridView.setAdapter(adapter[0]);
-
-        // Color Change
-        sidemenu[0].setTextColor(Color.parseColor("#FB0F0F"));
-        sidemenu[1].setTextColor(Color.parseColor("#000000"));
-        sideline[0].setBackgroundColor(Color.parseColor("#FB0F0F"));
-        sideline[1].setBackgroundColor(Color.parseColor("#00000000"));
-      }
-    });
-
-    sidemenu[1].setOnClickListener(new OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        // Menu Change
-        menu[0].setText("교육");
-        menu[1].setText("");
-        menu[2].setText("");
-        menu[3].setText("");
-        menu[4].setText("");
-        gridView.setNumColumns(1);
-        gridView.setAdapter(adapter[5]);
-
-        sidemenu[0].setTextColor(Color.parseColor("#000000"));
-        sidemenu[1].setTextColor(Color.parseColor("#FB0F0F"));
-        sideline[0].setBackgroundColor(Color.parseColor("#00000000"));
-        sideline[1].setBackgroundColor(Color.parseColor("#FB0F0F"));
-      }
-    });
-
   }
 
-  void updateConfig(ConfigObject config) {
+  ConfigFragment changeFragment(int resource, String[] list, int type) {
 
-    // General
-    for (int i = 0; i < adapter[1].getCount(); i++) {
-      ConfigItem item = adapter[1].getItem(i);
-      if (item.getCheck()) {
-        config.setType(i);
-      }
+    // Add Config
+    ConfigObject configObject = mConfigData.add(list, type);
+
+    // Next Fragment
+    ConfigFragment fragment = ConfigFragment.newInstance(resource, configObject);
+
+    // Change
+    FragmentTransaction tr = mFragmentManager.beginTransaction();
+    tr.replace(R.id.fragment, fragment).addToBackStack(null).commit();
+
+    return fragment;
+  }
+
+  public void onListFragmentInteraction(int type) {
+
+    // Menu Color Change
+    if (type == GENERAL_MENU ||
+        type == TYPE_MENU ||
+        type == REPEAT_MENU ||
+        type == TIME_MENU ||
+        type == STIMULI_MENU) {
+      mSideMenu[0].setTextColor(Color.parseColor("#FB0F0F"));
+      mSideLine[0].setBackgroundColor(Color.parseColor("#FB0F0F"));
+      mSideMenu[1].setTextColor(Color.parseColor("#000000"));
+      mSideLine[1].setBackgroundColor(Color.parseColor("#00000000"));
+    } else {
+      mSideMenu[0].setTextColor(Color.parseColor("#000000"));
+      mSideLine[0].setBackgroundColor(Color.parseColor("#00000000"));
+      mSideMenu[1].setTextColor(Color.parseColor("#FB0F0F"));
+      mSideLine[1].setBackgroundColor(Color.parseColor("#FB0F0F"));
     }
 
-    for (int i = 0; i < adapter[2].getCount(); i++) {
-      ConfigItem item = adapter[2].getItem(i);
-      if (item.getCheck()) {
-        config.setNumber(i);
-      }
+    // Nav Change
+    if (type == GENERAL_MENU) {
+      mMenu[0].setText("일반");
+      mMenu[1].setText("");
+      mMenu[2].setText("");
+      mMenu[3].setText("");
+      mMenu[4].setText("");
+    } else if (type == EDUCATION_MENU) {
+      mMenu[0].setText("교육");
+      mMenu[1].setText("");
+      mMenu[2].setText("");
+      mMenu[3].setText("");
+      mMenu[4].setText("");
+    } else if (type == TYPE_MENU) {
+      mMenu[0].setText("일반");
+      mMenu[1].setText(">");
+      mMenu[2].setText("장애 유형");
+      mMenu[3].setText("");
+      mMenu[4].setText("");
+    } else if (type == REPEAT_MENU) {
+      mMenu[0].setText("일반");
+      mMenu[1].setText(">");
+      mMenu[2].setText("반복 횟수");
+      mMenu[3].setText("");
+      mMenu[4].setText("");
+    } else if (type == TIME_MENU) {
+      mMenu[0].setText("일반");
+      mMenu[1].setText(">");
+      mMenu[2].setText("교육 시간");
+      mMenu[3].setText("");
+      mMenu[4].setText("");
+    } else if (type == STIMULI_MENU) {
+      mMenu[0].setText("일반");
+      mMenu[1].setText(">");
+      mMenu[2].setText("자극 유무");
+      mMenu[3].setText("");
+      mMenu[4].setText("");
+    } else if (type == SOUND_MENU) {
+      mMenu[0].setText("교육");
+      mMenu[1].setText(">");
+      mMenu[2].setText("음소");
+      mMenu[3].setText("");
+      mMenu[4].setText("");
+    } else if (type == CHAR_MENU) {
+      mMenu[0].setText("교육");
+      mMenu[1].setText(">");
+      mMenu[2].setText("음절");
+      mMenu[3].setText("");
+      mMenu[4].setText("");
+    } else if (type == WORD_MENU) {
+      mMenu[0].setText("교육");
+      mMenu[1].setText(">");
+      mMenu[2].setText("단어");
+      mMenu[3].setText("");
+      mMenu[4].setText("");
+    } else if (type == SOUND1_MENU) {
+      mMenu[0].setText("교육");
+      mMenu[1].setText(">");
+      mMenu[2].setText("음소");
+      mMenu[3].setText(">");
+      mMenu[4].setText("자음");
+    } else if (type == SOUND2_MENU) {
+      mMenu[0].setText("교육");
+      mMenu[1].setText(">");
+      mMenu[2].setText("음소");
+      mMenu[3].setText(">");
+      mMenu[4].setText("모음");
+    } else if (type == SOUND3_MENU) {
+      mMenu[0].setText("교육");
+      mMenu[1].setText(">");
+      mMenu[2].setText("음소");
+      mMenu[3].setText(">");
+      mMenu[4].setText("받침");
     }
+  }
 
-    for (int i = 0; i < adapter[3].getCount(); i++) {
-      ConfigItem item = adapter[3].getItem(i);
-      if (item.getCheck()) {
-        config.setTime(i);
+  public void onListFragmentInteraction(ConfigObject config, int i) {
+
+    // Type
+    int type = config.getType();
+
+    // Update Fragment
+    if (type == GENERAL_MENU) {
+
+      int next = GENERAL_MENU + i + 1;
+      changeFragment(R.layout.config_list_check, MENU_STRING[next], next);
+
+    } else if (type == EDUCATION_MENU) {
+
+      int next = EDUCATION_MENU + i + 1;
+      if (next == SOUND_MENU) {
+        changeFragment(R.layout.config_list_normal, MENU_STRING[next], next);
+      } else {
+        changeFragment(R.layout.config_list_check, MENU_STRING[next], next);
       }
-    }
 
-    for (int i = 0; i < adapter[4].getCount(); i++) {
-      ConfigItem item = adapter[4].getItem(i);
-      if (item.getCheck()) {
-        config.setStimuli(i);
-      }
-    }
+    } else if (type == SOUND_MENU) {
 
-    // Selected Sound
-    config.s1.clear();
-    config.s2.clear();
-    config.s3.clear();
+      int next = i + 9;
+      changeFragment(R.layout.config_list_check, MENU_STRING[next], next);
 
-    for (int i = 0; i < adapter[9].getCount(); i++) {
-      ConfigItem item = adapter[9].getItem(i);
-      if (item.getCheck()) {
-        config.s1.add(item.getText());
-      }
-    }
+    } else {
 
-    for (int i = 0; i < adapter[10].getCount(); i++) {
-      ConfigItem item = adapter[10].getItem(i);
-      if (item.getCheck()) {
-        config.s2.add(item.getText());
-      }
-    }
+      // Update Config Data
+      mConfigData.update(config, i);
 
-    for (int i = 0; i < adapter[11].getCount(); i++) {
-      ConfigItem item = adapter[11].getItem(i);
-      if (item.getCheck()) {
-        config.s3.add(item.getText());
-      }
     }
   }
 }

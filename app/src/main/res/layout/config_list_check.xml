@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
-  android:layout_height="match_parent"
+  android:layout_height="wrap_content"
   android:orientation="vertical">
 
   <LinearLayout
@@ -13,7 +13,7 @@
       android:id="@+id/textView"
       android:layout_width="0dp"
       android:layout_height="match_parent"
-      android:layout_weight="10"
+      android:layout_weight="20"
       android:paddingLeft="20dp"
       android:background="#FFFFFF"
       android:gravity="center_vertical"
@@ -32,7 +32,8 @@
       android:id="@+id/divider2"
       android:layout_width="0dp"
       android:layout_height="match_parent"
-      android:layout_weight="1" />
+      android:layout_weight="1"
+      android:background="#FFFFFF" />
   </LinearLayout>
   <TextView
     android:id="@+id/divider"
